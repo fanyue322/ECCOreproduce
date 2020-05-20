@@ -9,7 +9,7 @@ peer <- as.integer(args[1])
     M <- M_matrix[,iter]
     res1=M
     
-    load(paste0('/net/mulan/disk2/yuef/data/GTEX/GTEx_v7/qc/genotype1/',gene_names[iter],'.RData'))
+    load(‘#########’) ###load the genotype data of the cis-SNP of iterth gene
     snp_raw <- data.frame(snp_raw)
     A <- t(snp_raw[,geno_id %in% common])
     
