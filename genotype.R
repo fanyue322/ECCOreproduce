@@ -16,12 +16,12 @@ resBMM <- foreach(i=1:N, .combine=rbind, .errorhandling = 'remove')%dopar%
   res <- data.frame()
 name=d[i,4]  
 name=as.character(name)
-file=paste0('/net/mulan/disk2/yuef/data/GTEX/GTEx_v7/qc/genotype/',name)
+file= (‘#########’) ###load the genotype data of the cis-SNP of ith gene
 if(file.exists(file))
 {
   snp_raw=fread(file)
   snp_raw=snp_raw[,7:641]
-  sfile=paste0('/net/mulan/disk2/yuef/data/GTEX/GTEx_v7/qc/genotype1/',name,'.RData')
+  sfile=paste0('###') ###save the processed genotype data
   save(snp_raw,file=sfile)
 }
 print(i)
