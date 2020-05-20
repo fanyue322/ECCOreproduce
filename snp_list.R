@@ -3,7 +3,7 @@ chr_no <- as.integer(args[1])
 
 #library(data.table)
 
-bedfile<-data.frame(read.table(paste("/net/mulan/disk2/yuef/data/GTEX/GTEx_v7/chr", chr_no, ".bed", sep="")))
+bedfile<-data.frame(read.table(paste(".../chr", chr_no, ".bed", sep=""))) ### read the genotype data
 
 MAF1=bedfile[,9]
 MAF2=bedfile[,10]
