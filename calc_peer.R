@@ -2,14 +2,9 @@ args <- commandArgs(TRUE)
 tissue <- as.numeric(args[1])
 pc<-as.numeric(args[2])
 library('data.table')
-tissue_info <- fread("/net/mulan/disk2/yuef/data/GTEX/GTEx_v7/expression/names.txt",header=FALSE)
+tissue_info <- fread("######") ###load a file contains the names of 48 tissues
 
-#tissue_names <-substr(tissue_info,nchar(tissue_info)-4,nchar(tissue_info))
-for(i in 1:nrow(tissue_info))
-{
-  tissue_info[i]=substr(tissue_info[i],1,(nchar(tissue_info[i])-4))
-  
-}
+
 tissue=tissue_info[tissue]
 
 library(data.table)
