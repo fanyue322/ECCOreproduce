@@ -64,6 +64,29 @@ echo ${ARR}
 awk  'BEGIN{ OFS="\t"; }{ print $1, $2, $3, $4; }' ${FILE} > ${ARR}_gene_info.bed
 done
 
+
+bash
+export PATH=$PATH:.../bedops/bin
+GENE=.../GTEx/expression
+VCFTOOL=.../vcftools/src/cpp/vcftools
+INTERSECTBED=.../bedtools/bedtools2/bin/intersectBed
+VCF2BED=.../bedops/bin/vcf2bed
+
+for ((i=1; i<=22; i++)); do
+  VCFFILE=../chr${i}.dose.vcf.gz
+  Rscript snp_list.R ${i}
+  ${VCFTOOL} --gzvcf ${VCFFILE} --snps snp_list${i}.txt  --recode --recode-INFO-all --out chr${i}
+  ${VCFTOOL} --vcf chr${i}.recode.vcf --extract-FORMAT-info DS --out chr${i}
+  cat chr${i}.recode.vcf | cut -f1-8 > sub.chr${i}.vcf
+  ${VCF2BED} < sub.chr${i}.vcf > sub_chr${i}.bed
+  cat sub_chr${i}.bed | cut -f1-4 > sub.chr${i}.bed
+  tail -n +2 "chr${i}.DS.FORMAT" > "chr${i}.DS.FORMAT.tmp" && mv "chr${i}.DS.FORMAT.tmp" "chr${i}.DS.FORMAT"
+  paste sub.chr${i}.bed chr${i}.DS.FORMAT > all_chr${i}.bed
+  rm -f sub_chr${i}.bed
+  rm -f chr${i}.recode.vcf
+done
+
+
 cd .../qc
 GENE=...
 INTERSECTBED=.../bedtools/bedtools2/bin/intersectBed
