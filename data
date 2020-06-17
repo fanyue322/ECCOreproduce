@@ -72,7 +72,7 @@ for FILE in `ls *_gene_info.bed`; do
 echo ${FILE}
 ARR=($(echo ${FILE} | sed 's/_gene_info.bed/\n/g')); echo ${ARR}
 mkdir .../qc/${ARR}
- cd /net/mulan/disk2/yuef/data/GTEX/GTEx_v7/qc
+ cd .../qc
 for ((i=1; i<=22; i++)); do
 ${INTERSECTBED} -a all_chr${i}.bed  -b ${GENE}/${FILE} -wb > ./${ARR}/${ARR}_chr${i}
 cd ./${ARR}
