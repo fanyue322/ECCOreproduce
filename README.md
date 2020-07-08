@@ -10,7 +10,7 @@ The R package TwoSampleMR could be installed through:
 install.packages("devtools")
 devtools::install_github("MRCIEU/TwoSampleMR")
 ```
-And here is the detail information about the installation of R package peer.
+And here is the detail information about the installation of R package peer:
 https://github.com/PMBio/peer/wiki/Installation-instructions
 
 We also provide the detailed analysis scripts for real data in the real data folder.
