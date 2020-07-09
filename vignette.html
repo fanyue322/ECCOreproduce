@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Yue Fan and Xiang Zhou" />
+
+<meta name="date" content="2020-06-02" />
+
+<title>Efficient and Effective Control of Confounding in eQTL Mapping Studies through Joint Differential Expression and Mendelian Randomization Analyses–analysis script</title>
+
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Efficient and Effective Control of Confounding in eQTL Mapping Studies through Joint Differential Expression and Mendelian Randomization Analyses–analysis script</h1>
+<h4 class="author">Yue Fan and Xiang Zhou</h4>
+<h4 class="date">2020-06-02</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This vignette provides the analysis scripts for GTEx data in details.</p>
+</div>
+<div id="real-data-processing" class="section level2">
+<h2>Real data processing</h2>
+<p>… implys the workdir</p>
+<div id="extract-the-information-of-genes-require-r-package-data.table" class="section level4">
+<h4>Extract the information of genes (Require R package data.table )</h4>
+<pre><code>cd .../expression
+
+for FILE in *.bed.gz
+do
+echo ${FILE}
+ARR=($(echo ${FILE} | sed &#39;s/.v7.normalized_expression.bed.gz/\n/g&#39;))  ##GTEx gene expressoin file
+echo ${ARR}
+zcat ${FILE} | cut -f1-4 &gt; .../expression/${ARR}_gene_info.txt
+done
+
+for FILE in *_gene_info.txt
+do
+echo ${FILE}
+ARR=($(echo ${FILE} | sed &#39;s/_gene_info.txt/\n/g&#39;))
+echo ${ARR}
+Rscript cis.R ${ARR}
+done
+
+###cis.R###  
+args &lt;- commandArgs(TRUE)
+tissue &lt;- as.character(args[1]) ##the tissue&#39;s name(Muscle Skeletal,...)
+
+library(data.table)
+gene_info &lt;- data.frame(fread(paste(tissue, &quot;_gene_info.txt&quot;, sep=&quot;&quot;), header=T))
+for (i in 1:nrow(gene_info)) {
+  gene_info[i,2] &lt;- max(0, gene_info[i,2]-10^6)
+  gene_info[i,3] &lt;- gene_info[i,3]+10^6
+}
+write.table(gene_info, paste(tissue, &quot;_gene_info1.bed&quot;, sep=&quot;&quot;), quote=F, col.names=F, row.names=F)</code></pre>
+</div>
+<div id="extract-the-phenotype-data-height-weight-and-bmi" class="section level4">
+<h4>Extract the phenotype data (Height, weight and BMI)</h4>
+<p>cd …/GTEx/64278/PhenoGenotypeFiles/RootStudyConsentSet_phs000424.GTEx.v7.p2.c1.GRU/PhenotypeFiles gunzip -c phs000424.v7.pht002742.v7.p2.c1.GTEx_Subject_Phenotypes.GRU.txt.gz &gt; …/phenotype/phenotype.txt</p>
+<p>cat phenotype.txt| awk ‘{print $1&quot; “$2” “$4” “$5” “$6” “$7” “$8” “$10” “$12” “$13” “$14” “$15” “$16” &quot;$17}’ &gt; sub_phenotype.txt</p>
+<p>clean sub_phenotype.txt dt &lt;- read.table(“sub_phenotype.txt”, header=T) for (i in 1:nrow(dt)) { if (dt$SEX[i]==“Donor”) { print (i) dt[i,3:5] &lt;- dt[i,5:7] dt[i,7:8] &lt;- dt[i,8:9] dt[i,9] &lt;- dt[i,11] } }</p>
+<p>dt &lt;- dt[,1:9]; dt &lt;- dt[,-6] write.table(dt, “sub_phenotype1.txt”, quote=F, col.names=T, row.names=F)</p>
+</div>
+<div id="extract-the-genotype-data-for-each-gene-require-intersectbed" class="section level4">
+<h4>Extract the genotype data for each gene (Require intersectBed)</h4>
+<pre><code>for ((i=1; i&lt;=22; i++)); do
+echo ${i}
+VCFFILE=.../genotype/imputed/data/chr${i}.dose.vcf.gz
+zcat ${VCFFILE} | cut -f1-8 &gt; chr${i}.vcf
+cat chr${i}.vcf | awk -F &#39;;&#39; &#39;{print $1&quot;\t&quot;$2&quot;\t&quot;$3 }&#39; &gt; chr${i}.bed
+done 
+
+for ((i=1; i&lt;=22; i++)); do
+echo ${i}
+awk &#39;{sub(&quot;MAF=&quot;, &quot;&quot;, $9); print}&#39; &lt; chr${i}.bed &gt; chr_${i}.bed
+done
+
+for ((i=1; i&lt;=22; i++)); do
+echo ${i}
+awk &#39;{ if(($9 &gt;= 0.05)) { print } }&#39; chr_${i}.bed &gt; qc/chr${i}.bed
+done
+
+for FILE in *_gene_info1.bed
+do
+echo ${FILE}
+ARR=($(echo ${FILE} | sed &#39;s/_gene_info1.bed/\n/g&#39;))
+echo ${ARR}
+awk  &#39;BEGIN{ OFS=&quot;\t&quot;; }{ print $1, $2, $3, $4; }&#39; ${FILE} &gt; ${ARR}_gene_info.bed
+done
+
+cd .../qc
+GENE=...
+INTERSECTBED=.../bedtools/bedtools2/bin/intersectBed
+cd ${GENE}
+for FILE in `ls *_gene_info.bed`; do
+echo ${FILE}
+ARR=($(echo ${FILE} | sed &#39;s/_gene_info.bed/\n/g&#39;)); echo ${ARR}
+mkdir .../qc/${ARR}
+ cd /net/mulan/disk2/yuef/data/GTEX/GTEx_v7/qc
+for ((i=1; i&lt;=22; i++)); do
+${INTERSECTBED} -a all_chr${i}.bed  -b ${GENE}/${FILE} -wb &gt; ./${ARR}/${ARR}_chr${i}
+cd ./${ARR}
+awk &#39;{print &gt;&gt; $645; close($645)}&#39; ${ARR}_chr${i}
+done
+done
+
+library(doParallel) ###require R package DoParallel, data.table
+
+args &lt;- commandArgs(TRUE)
+args &lt;- as.numeric(args)
+chr=args[1]  ###chromosome
+d=read.table(&#39;gene.bed&#39;)
+library(data.table)
+library(doParallel)
+numCore = 10     ### numCore is the number of cores in your CPU
+
+idx=which(d[,1]==chr)
+d=d[idx,]
+
+registerDoParallel(cores=numCore)
+N=nrow(d)
+resBMM &lt;- foreach(i=1:N, .combine=rbind, .errorhandling = &#39;remove&#39;)%dopar%
+{
+  res &lt;- data.frame()
+name=d[i,4]  
+name=as.character(name)
+file= (‘#########’) ###load the genotype data of the cis-SNP of ith gene
+if(file.exists(file))
+{
+  snp_raw=fread(file)
+  snp_raw=snp_raw[,7:641]
+  sfile=paste0(&#39;###&#39;) ###save the processed genotype data
+  save(snp_raw,file=sfile)
+}
+print(i)
+res &lt;- data.frame(iter=i)
+return(res)
+}
+</code></pre>
+</div>
+<div id="calculate-the-gene-expression-residuals-with-peer-pacakgerequire-r-package-peer" class="section level4">
+<h4>Calculate the gene expression residuals with PEER pacakge(Require R package peer)</h4>
+<pre><code>cd .../expression/
+for ((i=1;i&lt;=48;i++))
+do
+for j in 1 2 5 10 15 20 25 30 35 40 50 60 70 80 90 100 150 200 250 
+do
+Rscript calc_peer.R ${i} ${j}
+done
+done
+
+###calc_peer.R
+args &lt;- commandArgs(TRUE)
+tissue &lt;- as.numeric(args[1])
+pc&lt;-as.numeric(args[2])
+library(&#39;data.table&#39;)
+tissue_info &lt;- fread(&quot;######&quot;) ###load a file contains the names of 48 tissues
+
+
+tissue=tissue_info[tissue]
+
+library(data.table)
+library(peer)
+dt &lt;- data.frame(fread(paste(tissue, &quot;_expression.txt&quot;, sep=&quot;&quot;), header = T))
+dt &lt;- dt[,-c(1:4)]; dt &lt;- t(as.matrix(dt))
+  model = PEER()
+  PEER_setPhenoMean(model,as.matrix(dt))
+  dim(PEER_getPhenoMean(model))
+
+  PEER_setAdd_mean(model, TRUE)
+  PEER_setNk(model,pc)  ## pc hidden confounders
+  PEER_getNk(model)
+
+  PEER_update(model)
+  #PEER_setNMax_iterations(model, 10000)
+
+  factors = PEER_getX(model)
+  factors=factors[,-1]
+  #dim(factors)
+  residuals = PEER_getResiduals(model)
+  #dim(residuals)
+  #write.table(factors, paste(&quot;peer_factor_&quot;,tissue,&#39;_&#39;, pc, &quot;.txt&quot;, sep=&quot;&quot;), quote=F, col.names=F, row.names=F)
+write.table(residuals, paste(tissue,&#39;_peer&#39;, pc, &quot;.txt&quot;, sep=&quot;&quot;), quote=F, col.names=F, row.names=F)
+  print (pc)</code></pre>
+</div>
+</div>
+<div id="generate-simulation-data-require-r-package-data.table" class="section level2">
+<h2>Generate Simulation data (Require R package data.table)</h2>
+<pre><code>library(data.table)
+n = 491 ###sample size
+n_genes = 10000 ### number of genes
+n_conf = 10 # number of confounding effects
+pve1 = 0.03; # the genetic contribution to the gene expression variation
+pve2 = 0.5;  # the  confounding factors in total contribute to the gene expression variation
+pve3 = 0.25; # all genes in total contribution to the phenotypic variance
+C &lt;- matrix(rnorm(n*n_conf, 0, sd = 1), nrow=n) # confounding factors
+M_matrix &lt;- c(); Y_matrix &lt;- c() 
+g_matrix &lt;- c(); beta_M1_matrix &lt;- c()
+
+gene &lt;- fread(paste(&quot;/net/mulan/disk2/yuef/data/GTEX/GTEx_v7/expression/&quot;, tissue, &quot;_expression.txt&quot;, sep=&quot;&quot;), header=T) #gene expression data
+gene_id &lt;- colnames(gene)[-c(1:4)] 
+gene_names &lt;- gene$gene_id 
+common &lt;- gene_id
+num=length(gene_names)
+idx=sample(1:num) # we select 10000 genes randomly
+num=1:n_genes
+gene_names=gene_names[num]</code></pre>
+<p>We first generate the gene expression data</p>
+<pre><code>for(i in 1:n_genes)
+{
+  #idx=sample(1:10)[1:5] #heterogeneous confounding scenario
+  file=paste(&quot;.../qc/&quot;, tissue, &quot;/&quot;, gene_names[i], sep=&quot;&quot;)
+  snp_raw &lt;- fread(file)
+  snp_raw &lt;- data.frame(snp_raw[,7:641])
+  A &lt;- t(snp_raw[,geno_id %in% common])
+  num_snp=ncol(A)
+  
+ 
+  j=sample(1:num_snp,1)
+  g1 &lt;- A[,j]
+
+  beta_g1 &lt;- rnorm(1, 0, sd = 1)
+  beta_g1 &lt;- beta_g1/(sd(g1 * beta_g1)) * sqrt(pve1)
+
+  beta_C &lt;- rnorm(n_conf, 0, sd = 1)
+  beta_C &lt;- beta_C/(sd(C %*% beta_C)) * sqrt(pve2)
+  #  beta_C[idx] &lt;- beta_C[idx]/(sd(C[,idx] %*% beta_C[idx])) * sqrt(pve2)# heterogeneous confounding scenario
+  e1 &lt;- rnorm(n, 0, sd = sqrt(1-pve1-pve2))
+  
+  g_matrix &lt;- cbind(g_matrix, g1 * beta_g1 + e1)
+  M_matrix &lt;- cbind(M_matrix, g1 * beta_g1 + C %*% beta_C + e1)
+ # M_matrix &lt;- cbind(M_matrix, g1 * beta_g1 + C[,idx] %*% beta_C[idx] + e1)# heterogeneous confounding scenario
+}</code></pre>
+<p>Generating the phenotype data</p>
+<pre><code>gamma &lt;- array(0, n_genes)
+gamma[1:1000] &lt;- rnorm(1000, 0, 1)  
+gamma &lt;- gamma/(sd(g_matrix %*% gamma)) * sqrt(pve_M)
+e2 &lt;- rnorm(n, 0, sd = sqrt(1-pve_M))
+Y &lt;- g_matrix %*% gamma + e2
+save(pc_matrix,Y,A,M_matrix,file=&#39;sim_pc10_sparse.RData&#39;) #sparse setting
+ 
+gamma &lt;- array(0, n_genes)
+gamma[1:10000] &lt;- rnorm(10000, 0, 1)
+gamma &lt;- gamma/(sd(g_matrix %*% gamma)) * sqrt(pve_M)
+e2 &lt;- rnorm(n, 0, sd = sqrt(1-pve_M))
+Y &lt;- g_matrix %*% gamma + e2
+save(pc_matrix,Y,A,M_matrix,file=&#39;sim_pc10_poly.RData&#39;) # polygenic setting</code></pre>
+</div>
+<div id="select-the-instrumental-variable-for-each-gene-require-r-package-matrixeqtl" class="section level2">
+<h2>Select the instrumental variable for each gene (Require R package MatrixEQTL)</h2>
+<pre><code>library(MatrixEQTL)
+###################
+### Read files ####  
+###################
+iv_snp=c()   
+peer=0
+  for(iter in iteration)
+  {
+    
+    M &lt;- M_matrix[,iter]
+    
+
+    load(‘#########’) ###load the genotype data of the cis-SNP of iterth gene
+    snp_raw &lt;- data.frame(snp_raw)
+    A &lt;- t(snp_raw[,geno_id %in% common])
+    
+   
+    snps = SlicedData$new();
+    A=as.matrix(A)
+    A=t(A)
+    snps$CreateFromMatrix(A)     #Load genotype data
+    
+    gene=SlicedData$new();
+    res1=as.matrix(M)
+    res1=t(res1)
+    gene$CreateFromMatrix(res1)  #Load gene expression data
+    
+    useModel = modelLINEAR; 
+    pvOutputThreshold = 5e-1;
+    errorCovariance = numeric();
+    output_file_name = tempfile();
+    me = Matrix_eQTL_engine(         # Run the analysis
+      snps = snps,
+      gene = gene,
+      output_file_name = output_file_name,
+      pvOutputThreshold = pvOutputThreshold,
+      useModel = useModel,
+      errorCovariance = errorCovariance,
+      verbose = TRUE,
+      pvalue.hist = TRUE,
+      min.pv.by.genesnp = FALSE,
+      noFDRsaveMemory = FALSE);
+    time=as.numeric(me$time.in.sec)
+    me=me$all$eqtls[1,]
+    tmp=as.character(me$snps)
+    onesnp=as.numeric(substr(tmp,4,nchar(tmp)))   
+    
+    iv_snp=rbind(iv_snp,A[onesnp,])           ##save the instrumental variable for each gene
+    num_snp=rbind(num_snp,c(iter,num1,num2))
+    
+    
+    l1 &lt;- lm(M ~ A[onesnp,])
+    l2 &lt;- lm(Y ~ M)
+    l3 &lt;- lm(Y ~  A[onesnp,])
+
+
+    summary &lt;- rbind(summary, c(iter,summary(l1)$coeff[2,4], summary(l1)$coeff[2,1], summary(l3)$coeff[2,1],summary(l3)$coeff[2,4], summary(l3)$coeff[2,1]/summary(l1)$coeff[2,1], summary(l2)$coeff[2,1],summary(l2)$coeff[2,4],time))
+    
+    print(iter)
+  }
+  
+  write.table(summary, paste(&quot;mr2_sim_&quot;, pc, &quot;.txt&quot;, sep=&quot;&quot;), quote=F, col.names=F, row.names=F)
+  file=paste(&quot;mr_sim.RData&quot;, sep=&quot;&quot;)
+  save(iv_snp,file=file)</code></pre>
+</div>
+<div id="section" class="section level2">
+<h2></h2>
+<pre><code>args &lt;- commandArgs(TRUE)
+peer &lt;- as.integer(args[1])
+###################
+### Read files ####
+###################
+  for(iter in 1:N)
+  {
+    ind=num_snp[iter,1]
+    res1=gene_peer[,ind]
+    M &lt;- M_matrix[,ind]
+    A=iv_snp[iter,]
+    
+    
+    t1=Sys.time()
+    l1 &lt;- lm(M ~ A)
+    
+    l2 &lt;- lm(Y ~ res1)
+    
+    l3 &lt;- lm(Y ~ A)
+    liv=ivreg(Y~M,~A)
+    t2=Sys.time()
+    time=as.numeric(t2-t1)
+    
+    summary &lt;- rbind(summary, c(iter,summary(l1)$coeff[2,4], summary(l1)$coeff[2,1], summary(l3)$coeff[2,1],summary(l3)$coeff[2,4], summary(l3)$coeff[2,1]/summary(l1)$coeff[2,1],summary(liv)$coeff[2,4], summary(l2)$coeff[2,1],summary(l2)$coeff[2,4],time))
+    
+    
+  }
+  
+  write.table(summary, paste(&quot;mr2_sim_peer&quot;, peer, &quot;.txt&quot;, sep=&quot;&quot;), quote=F, col.names=F, row.names=F)</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
