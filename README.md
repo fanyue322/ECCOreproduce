@@ -17,6 +17,7 @@ We also provide the detailed analysis scripts for real data in the real data fol
 
 Data file is the pipeline about how we process the GTEx original data
 
+Detailed analysis procedure: https://github.com/fanyue322/ECCOreproduce/blob/master/analysis%20notebook.pdf
 
 The GTEx eQTL　mapping results are hosting at: <https://github.com/fanyue322/ECCOreproduce/tree/master/eQTL_mapping_results>
 
